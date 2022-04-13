@@ -1,0 +1,7 @@
+apiVersion: etcd.tqtcloud.io/v1beta1
+kind: EtcdCluster
+metadata:
+  name: demo
+spec:
+  size: 5  # 副本数量
+  image: cnych/etcd:v3.4.13  # 镜像

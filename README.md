@@ -1,5 +1,5 @@
 # etcd-operator
-kubebuilder 构建的一个etcd集群项目
+`kubebuilder` 构建的一个etcd集群项目
 > 注意：集群内部需要默认的 `存储类` 才可正常运行
 
 

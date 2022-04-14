@@ -13,4 +13,13 @@ resources:
   kind: EtcdCluster
   path: github.com/tqtcloud/etcd-operator/api/v1beta1
   version: v1beta1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: tqtcloud.io
+  group: etcd
+  kind: EtcdBackup
+  path: github.com/tqtcloud/etcd-operator/api/v1beta1
+  version: v1beta1
 version: "3"

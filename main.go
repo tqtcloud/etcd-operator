@@ -37,8 +37,9 @@ import (
 )
 
 var (
-	scheme   = runtime.NewScheme()
-	setupLog = ctrl.Log.WithName("setup")
+	scheme             = runtime.NewScheme()
+	setupLog           = ctrl.Log.WithName("setup")
+	defaultBackupImage = "busybox" // 默认镜像信息
 )
 
 func init() {
@@ -52,11 +53,14 @@ func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
 	var probeAddr string
+	var backupimage string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
+	// 接受镜像信息
+	flag.StringVar(&backupimage, "backup-image", defaultBackupImage, "image of backup Etcd Cluster")
 	opts := zap.Options{
 		Development: true,
 	}
@@ -83,6 +87,14 @@ func main() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "EtcdCluster")
+		os.Exit(1)
+	}
+	if err = (&controllers.EtcdBackupReconciler{
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		BackupImage: backupimage, // 传递image信息过去
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "EtcdBackup")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
